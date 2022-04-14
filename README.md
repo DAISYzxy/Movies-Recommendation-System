@@ -1,4 +1,4 @@
-# Movie-Recommendation-System
+# Movies-Recommendation-System
 
 > A movie recommendation system uses Movielens dataset and IMDb dataset.
 
