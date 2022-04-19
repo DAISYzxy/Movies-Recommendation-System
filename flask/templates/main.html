@@ -24,10 +24,19 @@
 <link href="../static/css/style.css" rel="stylesheet">
 
  <link rel="shortcut icon" type="image/png" href="../static/image/movinder.jpg">
-
 </head>
 <body >
+<script type="text/javascript">
 
+    function display(id){
+        var traget=document.getElementById(id);
+        if(traget.style.display=="none"){
+            traget.style.display="";
+        }else{
+            traget.style.display="none";
+      }
+   }
+</script>
 <div class="container-xxl bg-white p-0">
 
 <div class="container-fluid p-0">
@@ -49,13 +58,13 @@
 <div class="col-md-4">
 <select name='age' class="form-select border-0">
 <option selected="">Age</option>
-<option value="0">1-10</option>
-<option value="1">11-20</option>
-<option value="2">21-30</option>
- <option value="3">31-40</option>
- <option value="4">41-50</option>
- <option value="5">51-60</option>
-  <option value="6">61 or more</option>
+    <option value="1">Under 18</option>
+    <option value="18">18-24</option>
+    <option value="25">25-34</option>
+    <option value="35">35-44</option>
+    <option value="45">45-49</option>
+    <option value="50">50-55</option>
+    <option value="56">56+</option>
 </select>
 </div>
 <div class="col-md-4">
@@ -68,31 +77,57 @@
 <div class="col-md-4">
 <select name='occupation' class="form-select border-0">
 <option selected="">Occupation</option>
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
+<option value="1">academic/educator</option>
+<option value="2">artist</option>
+    <option value="3">clerical/admin</option>
+    <option value="4">college/grad student</option>
+    <option value="5">customer service</option>
+    <option value="6">doctor/health care</option>
+    <option value="7">executive/managerial</option>
+    <option value="8">farmer</option>
+    <option value="9">homemaker</option>
+    <option value="10">K-12 student</option>
+    <option value="11">lawyer</option>
+    <option value="12">programmer</option>
+    <option value="13">retired</option>
+    <option value="14">sales/marketing</option>
+    <option value="15">scientist</option>
+    <option value="16">self-employed</option>
+    <option value="17">technician/engineer</option>
+    <option value="18">tradesman/craftsman</option>
+    <option value="19">unemployed</option>
+    <option value="20">writer</option>
+    <option value="0">other</option>
 </select>
 </div>
-<div class="col-md-4">
-<input name='zipcode' type="text" class="form-control border-0" placeholder="Zipcode you lived in">
 </div>
 </div>
 </div>
 </div>
-</div>
- <div class="row g-4">
+ <div class="row g-4" id='beforemodel'>
  <div class="col-md-10">
  <div class="row g-4">
   <div class="col-md-2">
-<button class="btn btn-dark border-0 w-200" type="submit" name="find_direct" value="find_direct">Find the perfect movies directly.</button>
+<button class="btn btn-dark border-0 w-200"type="button" name="find_direct" value="find_direct" id="find_direct" onclick="display('beforemodel');display('modelaandb')" >Find the perfect movies directly.</button>
 </div>
-  <div class="col-md-2">
-<button class="btn btn-dark border-0 w-200" type="submit" name="more_movies" value="more_movies">Rating for the movies you have seen.</button>
+     <div class="col-md-2">
+<button class="btn btn-dark border-0 w-200" type="submit" name="more_movies" value="more_movies" id ="more_movies" >Rating for the movies you have seen.</button>
 </div>
   </div>
 </div>
  </div>
 </div>
+    <div class="row g-4" style="display:none" id="modelaandb">
+        <div class="col-md-10">
+             <div class="row g-4">
+                 <div  class="col-md-2">
+                     <button class="btn btn-dark border-0 w-200"type="submit" name="modelA" value="modelA" id="modelA">Get Recommendation using Model A</button>
+                 </div>
+                 <div  class="col-md-2">
+                     <button class="btn btn-dark border-0 w-200"type="submit" name="modelB" value="modelB" id="modelB">Get Recommendation using Model B</button>
+                 </div>
+            </div>
+        </div>
    </form>
 </div>
 </div>
