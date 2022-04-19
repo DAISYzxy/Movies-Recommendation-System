@@ -105,11 +105,11 @@ def rank():
         ratingArr = [int(movie_0), int(movie_1), int(movie_2), int(movie_3), int(movie_4),
                      int(movie_5),int(movie_6),int(movie_7),int(movie_8),int(movie_9)]
         movieids = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
-        recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+        recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
 
         recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
-                                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+                                  scores_list))
 
         # recommendation=recommendation_svd(ratingArr, movieids, 5, df_ratings)
 
@@ -139,13 +139,14 @@ def rank():
         ratingArr = [movie_0, movie_1, movie_2, movie_3, movie_4,
                      movie_5, movie_6, movie_7, movie_8, movie_9]
         movieids = [1230,2664,2019,3201,1921,642,1193,402,872,989]
-        recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+
+        recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
         print(recommendation_list)
 
         recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
-                                  [1,2,3,4,5,6,7,8,9,10]))
-        print(recommendation)
+                                  scores_list))
+        # print(recommendation)
         
         return render_template('movie.html', recommendation=recommendation)
         # return "success"
