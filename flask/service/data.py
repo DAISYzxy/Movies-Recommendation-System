@@ -25,3 +25,9 @@ def initial_data():
 
     return df,df_users,df_movies,df_ratings,df_posters
 
+# root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/' # please set the root_dir to the folder which stores the model and the file
+# df = pd.read_csv(root_dir + "MovieLens_IMDB.csv", index_col = 0)
+# print(len(df['MovieID'].unique()))
+#
+# df_ML_movies, df_users, df_movies, df_ratings, df_posters = initial_data()
+# print(len(df_ML_movies['MovieID'].unique()))

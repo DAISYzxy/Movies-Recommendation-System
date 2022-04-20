@@ -1,12 +1,14 @@
-from flask import Flask, url_for, request, render_template
+from flask import Flask, url_for, request, render_template, session
 import pandas as pd
 import numpy as np
 
 from service.data import initial_data
 
 from service.svd import recommendation_svd
+from service.DSSM import Recommendation_DSSM
 
 app = Flask(__name__)
+app.secret_key = "super secret key"
 
 def recommendation_direct(age, gender, occupation, zipcode):
     # recommendation method should be added!
@@ -51,8 +53,8 @@ def recommendation_with_rank(age, gender, occupation, zipcode, movie_0, movie_1,
 
     return recommendation
 
-
-df_ML_movies,df_users,df_movies,df_ratings,df_posters = initial_data()
+# initial data
+df_ML_movies, df_users, df_movies, df_ratings, df_posters = initial_data()
 
 @app.route('/recommend', methods=["GET", "POST"])
 def user_info():
@@ -61,8 +63,18 @@ def user_info():
         gender = request.form['gender']
         occupation = request.form['occupation']
         zipcode = request.form['zipcode']
+        session.clear()
+        session['rate10'] = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
+
         if 'find_direct' in request.form:
-            recommendation = recommendation_direct(age, gender, occupation, zipcode)
+            # please set the root_dir to the folder which stores the model and the file
+            root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
+            recommendation_list, scores_list = Recommendation_DSSM('F',18, occupation, 10, root_dir)
+            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+                                      list(df_ML_movies[
+                                               df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
+                                      scores_list))
+
             return render_template('movie.html', recommendation=recommendation)
 
         # moviestorank = movie_ranking(age, gender, occupation, zipcode)
@@ -75,8 +87,14 @@ def user_info():
         gender = request.args.get('gender')
         occupation = request.args.get('occupation')
         zipcode = request.args.get('zipcode')
+        print(age,gender,occupation,zipcode)
         if 'find_direct' in request.args:
-            recommendation = recommendation_direct(age, gender, occupation, zipcode)
+            root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
+            recommendation_list, scores_list = Recommendation_DSSM('F',18, occupation, 10, root_dir)
+            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+                                      list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
+                                      scores_list))
+
             return render_template('movie.html', recommendation=recommendation)
 
 
@@ -104,7 +122,7 @@ def rank():
 
         ratingArr = [int(movie_0), int(movie_1), int(movie_2), int(movie_3), int(movie_4),
                      int(movie_5),int(movie_6),int(movie_7),int(movie_8),int(movie_9)]
-        movieids = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
+        movieids = session['rate10']
         recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
 
         recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
@@ -138,8 +156,8 @@ def rank():
 
         ratingArr = [movie_0, movie_1, movie_2, movie_3, movie_4,
                      movie_5, movie_6, movie_7, movie_8, movie_9]
-        movieids = [1230,2664,2019,3201,1921,642,1193,402,872,989]
-
+        movieids = session['rate10']
+        # svd
         recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
         print(recommendation_list)
 
