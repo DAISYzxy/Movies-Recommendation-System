@@ -10,11 +10,12 @@ from service.DSSM import Recommendation_DSSM
 app = Flask(__name__)
 app.secret_key = "super secret key"
 
-def recommendation_direct(age, gender, occupation, zipcode):
+def recommendation_direct(age, gender, occupation):
     # recommendation method should be added!
     df_recommendation = pd.DataFrame({'movieId': np.array([1] * 10, dtype='int32'),
                                       'title': 'Toy Story',
-                                      'poster_url': 'https://images-na.ssl-images-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@..jpg',
+                                      'poster_url': '',
+                                   #    'poster_url': 'https://images-na.ssl-images-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@..jpg',
                                       'score': 3.5
                                       })
 
@@ -25,7 +26,7 @@ def recommendation_direct(age, gender, occupation, zipcode):
 
     return recommendation
 
-def movie_ranking(age, gender, occupation, zipcode):
+def movie_ranking(age, gender, occupation):
     # ranking method should be added!
     df_recommendation = pd.DataFrame({'movieId': np.array([1] * 10, dtype='int32'),
                                       'title': 'Toy Story',
@@ -37,7 +38,7 @@ def movie_ranking(age, gender, occupation, zipcode):
 
     return moviestorank
 
-def recommendation_with_rank(age, gender, occupation, zipcode, movie_0, movie_1, movie_2, movie_3, movie_4, movie_5,
+def recommendation_with_rank(age, gender, occupation, movie_0, movie_1, movie_2, movie_3, movie_4, movie_5,
                              movie_6,
                              movie_7, movie_8, movie_9):
     # recommendation method with both user info and ranking info should be added!
@@ -62,6 +63,7 @@ def user_info():
         age = request.form['age']
         gender = request.form['gender']
         occupation = request.form['occupation']
+<<<<<<< HEAD
         zipcode = request.form['zipcode']
         session.clear()
         session['rate10'] = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
@@ -75,17 +77,21 @@ def user_info():
                                                df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                       scores_list))
 
+=======
+        if 'modelA' in request.form:
+            recommendation = recommendation_direct(age, gender, occupation)
+>>>>>>> 85dc8de90123279c7eeaca7d79c5cae3635f6b74
             return render_template('movie.html', recommendation=recommendation)
 
-        # moviestorank = movie_ranking(age, gender, occupation, zipcode)
-        moviestorank = movie_ranking(age, gender, occupation, zipcode)
+        moviestorank = movie_ranking(age, gender, occupation)
 
-        return render_template('ranking.html', moviestorank=moviestorank,age=age,gender=gender,occupation=occupation,zipcode=zipcode)
+        return render_template('ranking.html', moviestorank=moviestorank,age=age,gender=gender,occupation=occupation)
 
     else:
         age = request.args.get('age')
         gender = request.args.get('gender')
         occupation = request.args.get('occupation')
+<<<<<<< HEAD
         zipcode = request.args.get('zipcode')
         print(age,gender,occupation,zipcode)
         if 'find_direct' in request.args:
@@ -95,11 +101,15 @@ def user_info():
                                       list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                       scores_list))
 
+=======
+        if 'modelA' in request.args:
+            recommendation = recommendation_direct(age, gender, occupation)
+>>>>>>> 85dc8de90123279c7eeaca7d79c5cae3635f6b74
             return render_template('movie.html', recommendation=recommendation)
 
 
-        moviestorank = movie_ranking(age, gender, occupation, zipcode)
-        return render_template('ranking.html', moviestorank=moviestorank,age=age,gender=gender,occupation=occupation,zipcode=zipcode)
+        moviestorank = movie_ranking(age, gender, occupation)
+        return render_template('ranking.html', moviestorank=moviestorank,age=age,gender=gender,occupation=occupation)
 
 
 @app.route('/rank', methods=["GET", "POST"])
@@ -118,20 +128,28 @@ def rank():
         age = request.form['age']
         gender = request.form['gender']
         occupation = request.form['occupation']
+<<<<<<< HEAD
         zipcode = request.form['zipcode']
 
         ratingArr = [int(movie_0), int(movie_1), int(movie_2), int(movie_3), int(movie_4),
                      int(movie_5),int(movie_6),int(movie_7),int(movie_8),int(movie_9)]
         movieids = session['rate10']
         recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+=======
+        if 'modelC' in request.form:
+            ratingArr = [int(movie_0), int(movie_1), int(movie_2), int(movie_3), int(movie_4),
+                        int(movie_5),int(movie_6),int(movie_7),int(movie_8),int(movie_9)]
+            movieids = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
+            recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+>>>>>>> 85dc8de90123279c7eeaca7d79c5cae3635f6b74
 
-        recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                   scores_list))
 
-        # recommendation=recommendation_svd(ratingArr, movieids, 5, df_ratings)
+            # recommendation=recommendation_svd(ratingArr, movieids, 5, df_ratings)
 
-        return render_template('movie.html', recommendation=recommendation)
+            return render_template('movie.html', recommendation=recommendation)
 
 
     else:
@@ -148,27 +166,37 @@ def rank():
         age = request.args.get('age')
         gender = request.args.get('gender')
         occupation = request.args.get('occupation')
-        zipcode = request.args.get('zipcode')
 
-        # recommendation = recommendation_with_rank(age, gender, occupation, zipcode, movie_0, movie_1, movie_2, movie_3,
+        # recommendation = recommendation_with_rank(age, gender, occupation
+        # , movie_0, movie_1, movie_2, movie_3,
         #                                       movie_4, movie_5, movie_6,
         #                                       movie_7, movie_8, movie_9)
 
-        ratingArr = [movie_0, movie_1, movie_2, movie_3, movie_4,
+        if 'modelC' in request.args:
+            ratingArr = [movie_0, movie_1, movie_2, movie_3, movie_4,
                      movie_5, movie_6, movie_7, movie_8, movie_9]
+<<<<<<< HEAD
         movieids = session['rate10']
         # svd
         recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
         print(recommendation_list)
+=======
+            movieids = [1230,2664,2019,3201,1921,642,1193,402,872,989]
+            recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+            print(recommendation_list)
+>>>>>>> 85dc8de90123279c7eeaca7d79c5cae3635f6b74
 
-        recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
+<<<<<<< HEAD
                                   scores_list))
         # print(recommendation)
+=======
+                                  [1,2,3,4,5,6,7,8,9,10]))
+            print(recommendation)
+>>>>>>> 85dc8de90123279c7eeaca7d79c5cae3635f6b74
         
-        return render_template('movie.html', recommendation=recommendation)
-        # return "success"
-
+            return render_template('movie.html', recommendation=recommendation)
 
 if __name__ == '__main__':
     app.run(debug=True)
