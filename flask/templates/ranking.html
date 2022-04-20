@@ -48,7 +48,7 @@
     {% for i in range(10) %}
 <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
 <a class="cat-item rounded p-4">
-<img class="fa fa-3x fa-mail-bulk mb-4" src="{{moviestorank[i][1]}}" width="90%" height="50%"></img>
+<img class="fa fa-3x fa-mail-bulk mb-4" src="{{moviestorank[i][1]}}" onerror="this.onerror=null; this.src='../static/picture/no-poster.jpg'" width="90%" height="50%">
 <h6 class="mb-3 text-white">Rate for: {{ moviestorank[i][0].title() }}</h6>
      <select name="movie-{{ i }}" class="form-select border-0">
        <option selected="" value="1">1</optionvalue="{{ o }}">

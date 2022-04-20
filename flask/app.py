@@ -12,7 +12,8 @@ def recommendation_direct(age, gender, occupation):
     # recommendation method should be added!
     df_recommendation = pd.DataFrame({'movieId': np.array([1] * 10, dtype='int32'),
                                       'title': 'Toy Story',
-                                      'poster_url': 'https://images-na.ssl-images-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@..jpg',
+                                      'poster_url': '',
+                                   #    'poster_url': 'https://images-na.ssl-images-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@..jpg',
                                       'score': 3.5
                                       })
 
