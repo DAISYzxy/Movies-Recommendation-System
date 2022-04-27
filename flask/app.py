@@ -9,6 +9,7 @@ from service.data import initial_data
 from service.svd import recommendation_svd
 
 app = Flask(__name__)
+app.secret_key = "super secret key"
 
 def recommendation_direct(age, gender, occupation):
     # recommendation method should be added!
@@ -56,6 +57,7 @@ def recommendation_with_rank(age, gender, occupation, movie_0, movie_1, movie_2,
 
 
 df_ML_movies,df_users,df_movies,df_ratings,df_posters = initial_data()
+# movieid_list = [296,1225,1288,1027,1343,10,380,1320,1030,356]
 
 @app.route('/recommend', methods=["GET", "POST"])
 def user_info():
@@ -68,6 +70,8 @@ def user_info():
         if 'modelA' in request.form:
             root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
             recommendation_list, scores_list = Recommendation_DSSM('F', 18, occupation, 10, root_dir)
+            global movieid_list
+            movieid_list = recommendation_list
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                       list(df_ML_movies[
                                                df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique())
@@ -77,7 +81,8 @@ def user_info():
         # 需要rank信息，默认使用DSSM预推荐10部电影
         root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
         recommendation_list, scores_list = Recommendation_DSSM('F', 18, occupation, 10, root_dir)
-
+        movieid_list=recommendation_list
+        print(movieid_list)
         recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique())
                                   ))
@@ -115,11 +120,9 @@ def rank():
 
         ratingArr = [int(movie_0), int(movie_1), int(movie_2), int(movie_3), int(movie_4),
                      int(movie_5), int(movie_6), int(movie_7), int(movie_8), int(movie_9)]
-        movieids = [296,1225,1288,1027,1343,10,380,1320,1030,356]
 
         if 'modelC' in request.form:
-
-            recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+            recommendation_list,scores_list = recommendation_svd(ratingArr, movieid_list, 10, df_ML_movies)
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                   scores_list))
@@ -127,8 +130,9 @@ def rank():
             return render_template('movie.html', recommendation=recommendation)
 
         if 'modelD' in request.form:
+            print(movieid_list)
             root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
-            recommendation_list,scores_list = Recommendation_NGCF(ratingArr, movieids, 10, root_dir)
+            recommendation_list,scores_list = Recommendation_NGCF(ratingArr, movieid_list, 10, root_dir)
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                       list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                       scores_list))
