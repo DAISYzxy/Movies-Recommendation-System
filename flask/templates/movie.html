@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Movie Page</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="" name="keywords">
+<meta content="" name="description">
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="../static/css/css2.css" rel="stylesheet">
+
+<link href="../static/css/all.min.css" rel="stylesheet">
+<link href="../static/css/bootstrap-icons.css" rel="stylesheet">
+
+<link href="../static/css/animate.min.css" rel="stylesheet">
+<link href="../static/css/owl.carousel.min.css" rel="stylesheet">
+
+<link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="../static/css/style.css" rel="stylesheet">
+
+ <link rel="shortcut icon" type="image/png" href="../static/image/movinder.jpg">
+
+</head>
+<body>
+
+<div class="container-xxl bg-white p-0">
+
+<div class="container-fluid p-0">
+ <div class="position-relative">
+<img class="img-fluid" src="../static/picture/bg.jpg" alt="">
+<div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(43, 57, 64, .5);" >
+
+<div class="container-xxl py-5">
+<div class="container">
+<h1 class="text-center mb-5 text-white">Your top-15 matched movies:</h1>
+<div class="row g-4">
+    {% for i in range(10) %}
+<div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+<a class="cat-item rounded p-4" href="">
+<img class="fa fa-3x fa-mail-bulk mb-4" src="{{recommendation[i][1]}}" onerror="this.onerror=null; this.src='../static/picture/no-poster.jpg'" width="90%" height="50%">
+<h6 class="mb-3 text-white">{{ recommendation[i][0].title() }}</h6>
+<p class="mb-0 text-white">Movie Match: {{ "%.2f"|format(recommendation[i][2]) }}</p>
+</a>
+</div>
+     {% endfor %}
+</div>
+</div>
+</div>
+
+
+<script data-cfasync="false" src="../static/js/email-decode.min.js"></script><script src="../static/js/jquery-3.4.1.min.js" type="38ba89abc959ef2c0e16b491-text/javascript"></script>
+<script src="../static/js/bootstrap.bundle.min.js" type="38ba89abc959ef2c0e16b491-text/javascript"></script>
+<script src="../static/js/wow.min.js" type="38ba89abc959ef2c0e16b491-text/javascript"></script>
+<script src="../static/js/easing.min.js" type="38ba89abc959ef2c0e16b491-text/javascript"></script>
+<script src="../static/js/waypoints.min.js" type="38ba89abc959ef2c0e16b491-text/javascript"></script>
+<script src="../static/js/owl.carousel.min.js" type="38ba89abc959ef2c0e16b491-text/javascript"></script>
+
+<script src="../static/js/main.js" type="38ba89abc959ef2c0e16b491-text/javascript"></script>
+<script src="../static/js/rocket-loader.min.js" data-cf-settings="38ba89abc959ef2c0e16b491-|49" defer=""></script></body>
+</html>
