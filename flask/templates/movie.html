@@ -42,7 +42,7 @@
     {% for i in range(10) %}
 <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
 <a class="cat-item rounded p-4" href="">
-<img class="fa fa-3x fa-mail-bulk mb-4" src="{{recommendation[i][1]}}" onerror="this.onerror=null; this.src='../static/picture/no-poster.jpg'" width="90%" height="50%">
+<img class="fa fa-3x fa-mail-bulk mb-4" src="{{recommendation[i][1]}}" width="90%" height="50%"></img>
 <h6 class="mb-3 text-white">{{ recommendation[i][0].title() }}</h6>
 <p class="mb-0 text-white">Movie Match: {{ "%.2f"|format(recommendation[i][2]) }}</p>
 </a>
