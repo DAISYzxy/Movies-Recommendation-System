@@ -33,7 +33,7 @@ def Recommendation_DSSM(gender, age, occupation, top_N, root_dir):
     df = pd.read_csv(root_dir + "MovieLens_IMDB.csv", index_col = 0)
     df_sample = df.drop_duplicates(subset = ['MovieID'])#sample(100000, replace = False)
     MovieID_sample = np.array(df_sample['MovieID']).reshape(-1,)
-    users = pd.read_csv(root_dir + 'ml-1m/users.dat', sep='::', header=None, 
+    users = pd.read_csv(root_dir + 'movielens/users.dat', sep='::', header=None,
                      names=['UserID', 'Gender', 'Age', 'Occupation', 'Zip-code'])
 
     users.loc['pred_user'] = [0, gender, age, occupation, 'X']
@@ -69,4 +69,3 @@ def Recommendation_DSSM(gender, age, occupation, top_N, root_dir):
     return [x[1] for x in tmp][0:top_N], [x[0] for x in tmp][0:top_N]
 
 
-    

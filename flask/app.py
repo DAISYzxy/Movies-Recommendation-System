@@ -2,6 +2,7 @@ from flask import Flask, url_for, request, render_template
 import pandas as pd
 import numpy as np
 
+from service.DSSM import Recommendation_DSSM
 from service.data import initial_data
 
 from service.svd import recommendation_svd
@@ -61,13 +62,26 @@ def user_info():
         age = request.form['age']
         gender = request.form['gender']
         occupation = request.form['occupation']
+
+        # DSSM模型
         if 'modelA' in request.form:
-            recommendation = recommendation_direct(age, gender, occupation)
+            root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
+            recommendation_list, scores_list = Recommendation_DSSM('F', 18, occupation, 10, root_dir)
+            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+                                      list(df_ML_movies[
+                                               df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique())
+                                      ))
             return render_template('movie.html', recommendation=recommendation)
 
-        moviestorank = movie_ranking(age, gender, occupation)
+        # 需要rank信息，默认使用DSSM预推荐10部电影
+        root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
+        recommendation_list, scores_list = Recommendation_DSSM('F', 18, occupation, 10, root_dir)
 
-        return render_template('ranking.html', moviestorank=moviestorank,age=age,gender=gender,occupation=occupation)
+        recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+                                  list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique())
+                                  ))
+
+        return render_template('ranking.html', moviestorank=recommendation,age=age,gender=gender,occupation=occupation)
 
     else:
         age = request.args.get('age')
@@ -76,7 +90,6 @@ def user_info():
         if 'modelA' in request.args:
             recommendation = recommendation_direct(age, gender, occupation)
             return render_template('movie.html', recommendation=recommendation)
-
 
         moviestorank = movie_ranking(age, gender, occupation)
         return render_template('ranking.html', moviestorank=moviestorank,age=age,gender=gender,occupation=occupation)
@@ -128,23 +141,16 @@ def rank():
         gender = request.args.get('gender')
         occupation = request.args.get('occupation')
 
-        # recommendation = recommendation_with_rank(age, gender, occupation
-        # , movie_0, movie_1, movie_2, movie_3,
-        #                                       movie_4, movie_5, movie_6,
-        #                                       movie_7, movie_8, movie_9)
 
         if 'modelC' in request.args:
             ratingArr = [movie_0, movie_1, movie_2, movie_3, movie_4,
                      movie_5, movie_6, movie_7, movie_8, movie_9]
             movieids = [1230,2664,2019,3201,1921,642,1193,402,872,989]
             recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
-            print(recommendation_list)
-
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                   [1,2,3,4,5,6,7,8,9,10]))
-            print(recommendation)
-        
+            
             return render_template('movie.html', recommendation=recommendation)
 
 if __name__ == '__main__':
