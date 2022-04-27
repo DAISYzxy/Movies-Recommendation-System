@@ -64,7 +64,6 @@ def user_info():
         gender = request.form['gender']
         occupation = request.form['occupation']
         zipcode = request.form['zipcode']
-
         session.clear()
         session['rate10'] = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
 
@@ -76,7 +75,6 @@ def user_info():
                                       list(df_ML_movies[
                                                df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                       scores_list))
-            return render_template('movie.html', recommendation=recommendation)
 
 
         if 'modelA' in request.form:
@@ -85,6 +83,7 @@ def user_info():
             return render_template('movie.html', recommendation=recommendation)
 
         moviestorank = movie_ranking(age, gender, occupation)
+
         return render_template('ranking.html', moviestorank=moviestorank,age=age,gender=gender,occupation=occupation)
 
     else:
@@ -99,7 +98,7 @@ def user_info():
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                       list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                       scores_list))
-            return render_template('movie.html', recommendation=recommendation)
+
 
         if 'modelA' in request.args:
             recommendation = recommendation_direct(age, gender, occupation)
@@ -140,9 +139,13 @@ def rank():
                         int(movie_5),int(movie_6),int(movie_7),int(movie_8),int(movie_9)]
             movieids = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
             recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+
+
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                                   scores_list))
+
+            # recommendation=recommendation_svd(ratingArr, movieids, 5, df_ratings)
 
             return render_template('movie.html', recommendation=recommendation)
 
@@ -162,16 +165,29 @@ def rank():
         gender = request.args.get('gender')
         occupation = request.args.get('occupation')
 
+        # recommendation = recommendation_with_rank(age, gender, occupation
+        # , movie_0, movie_1, movie_2, movie_3,
+        #                                       movie_4, movie_5, movie_6,
+        #                                       movie_7, movie_8, movie_9)
+
         if 'modelC' in request.args:
             ratingArr = [movie_0, movie_1, movie_2, movie_3, movie_4,
                      movie_5, movie_6, movie_7, movie_8, movie_9]
-
         movieids = session['rate10']
         # svd
         recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+        print(recommendation_list)
+
+        movieids = [1230,2664,2019,3201,1921,642,1193,402,872,989]
+        recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
+        print(recommendation_list)
+
+
         recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                               list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
                               scores_list))
+    # print(recommendation)
+        print(recommendation)
 
         return render_template('movie.html', recommendation=recommendation)
 
