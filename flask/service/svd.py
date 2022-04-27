@@ -18,6 +18,8 @@ def generate(MovieIDs, num_mvs, df):
 '''
   Recommendation.
 '''
+
+
 def recommendation_svd(ratingArr, movieids, num_movie, df):
     ratings_dict = {'MovieID': list(df.MovieID) + list(movieids),
                     'UserID': list(df.UserID) + [max(df.UserID) + 1 for i in range(num_movie)],
