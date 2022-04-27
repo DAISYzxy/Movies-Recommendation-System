@@ -2,6 +2,7 @@ from flask import Flask, url_for, request, render_template
 import pandas as pd
 import numpy as np
 
+from service.NGCF import Recommendation_NGCF
 from service.DSSM import Recommendation_DSSM
 from service.data import initial_data
 
@@ -111,20 +112,28 @@ def rank():
         age = request.form['age']
         gender = request.form['gender']
         occupation = request.form['occupation']
-        if 'modelC' in request.form:
-            ratingArr = [int(movie_0), int(movie_1), int(movie_2), int(movie_3), int(movie_4),
-                        int(movie_5),int(movie_6),int(movie_7),int(movie_8),int(movie_9)]
-            movieids = [1230, 2664, 2019, 3201, 1921, 642, 1193, 402, 872, 989]
-            recommendation_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
 
+        ratingArr = [int(movie_0), int(movie_1), int(movie_2), int(movie_3), int(movie_4),
+                     int(movie_5), int(movie_6), int(movie_7), int(movie_8), int(movie_9)]
+        movieids = [296,1225,1288,1027,1343,10,380,1320,1030,356]
+
+        if 'modelC' in request.form:
+
+            recommendation_list,scores_list = recommendation_svd(ratingArr, movieids, 10, df_ML_movies)
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
-                                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
-
-            # recommendation=recommendation_svd(ratingArr, movieids, 5, df_ratings)
+                                  scores_list))
 
             return render_template('movie.html', recommendation=recommendation)
 
+        if 'modelD' in request.form:
+            root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
+            recommendation_list,scores_list = Recommendation_NGCF(ratingArr, movieids, 10, root_dir)
+            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+                                      list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
+                                      scores_list))
+
+            return render_template('movie.html', recommendation=recommendation)
 
     else:
         movie_0 = request.args.get('movie-0')
