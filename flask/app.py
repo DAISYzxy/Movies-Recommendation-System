@@ -2,6 +2,7 @@ from flask import Flask, url_for, request, render_template
 import pandas as pd
 import numpy as np
 
+from service.gbm import Recommendation_gbm
 from service.NGCF import Recommendation_NGCF
 from service.DSSM import Recommendation_DSSM
 from service.data import initial_data
@@ -57,7 +58,6 @@ def recommendation_with_rank(age, gender, occupation, movie_0, movie_1, movie_2,
 
 
 df_ML_movies,df_users,df_movies,df_ratings,df_posters = initial_data()
-# movieid_list = [296,1225,1288,1027,1343,10,380,1320,1030,356]
 
 @app.route('/recommend', methods=["GET", "POST"])
 def user_info():
@@ -65,24 +65,34 @@ def user_info():
         age = request.form['age']
         gender = request.form['gender']
         occupation = request.form['occupation']
+        global movieid_list
 
         # DSSM模型
         if 'modelA' in request.form:
             root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
-            recommendation_list, scores_list = Recommendation_DSSM('F', 18, occupation, 10, root_dir)
-            global movieid_list
+            recommendation_list, scores_list = Recommendation_DSSM(gender, age, occupation, 10, root_dir)
             movieid_list = recommendation_list
             recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
-                                      list(df_ML_movies[
-                                               df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique())
-                                      ))
+                                      list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
+                                      scores_list))
+            return render_template('movie.html', recommendation=recommendation)
+
+        # gbm模型
+        if 'modelB' in request.form:
+            df = pd.read_csv('data/df.csv')
+            df_movie = pd.read_csv('data/df_movie.csv')
+            new_user=[gender,age,occupation]
+            recommendation_list, scores_list,title_list, url_list = Recommendation_gbm(new_user, 10, df, df_movie)
+            movieid_list = recommendation_list
+            recommendation = list(zip(title_list,url_list,scores_list))
             return render_template('movie.html', recommendation=recommendation)
 
         # 需要rank信息，默认使用DSSM预推荐10部电影
         root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
-        recommendation_list, scores_list = Recommendation_DSSM('F', 18, occupation, 10, root_dir)
-        movieid_list=recommendation_list
-        print(movieid_list)
+        recommendation_list, scores_list = Recommendation_DSSM(gender, age, occupation, 10, root_dir)
+        movieid_list = recommendation_list
+        print('initialid',movieid_list)
+
         recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
                                   list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique())
                                   ))
@@ -123,9 +133,23 @@ def rank():
 
         if 'modelC' in request.form:
             recommendation_list,scores_list = recommendation_svd(ratingArr, movieid_list, 10, df_ML_movies)
-            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
-                                  list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
-                                  scores_list))
+
+            title_list = []
+            url_list = []
+            print(recommendation_list)
+            for id in recommendation_list:
+                if (df_posters[df_posters.MovieID.isin([id])].MovieID.empty):
+                    title_list.append(df_movies[df_movies.MovieID.isin([id])].Title.to_numpy()[0])
+                    url_list.append('')
+                else:
+                    title_list.append(df_ML_movies[df_ML_movies.MovieID.isin([id])].Title.to_numpy()[0])
+                    url_list.append(df_ML_movies[df_ML_movies.MovieID.isin([id])].PosterUrl.to_numpy()[0])
+            recommendation = list(zip(title_list, url_list, scores_list))
+
+            # recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+            #                       list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
+            #                       scores_list))
+
 
             return render_template('movie.html', recommendation=recommendation)
 
@@ -133,9 +157,20 @@ def rank():
             print(movieid_list)
             root_dir = '/Users/asteriachiang/Documents/5001_Foundations_of_Data_Analytics/model/'
             recommendation_list,scores_list = Recommendation_NGCF(ratingArr, movieid_list, 10, root_dir)
-            recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
-                                      list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
-                                      scores_list))
+            # recommendation = list(zip(list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].Title.unique()),
+            #                           list(df_ML_movies[df_ML_movies.MovieID.isin(recommendation_list)].PosterUrl.unique()),
+            #                           scores_list))
+            title_list = []
+            url_list = []
+            print(recommendation_list)
+            for id in recommendation_list:
+                if (df_posters[df_posters.MovieID.isin([id])].MovieID.empty):
+                    title_list.append(df_movies[df_movies.MovieID.isin([id])].Title.to_numpy()[0])
+                    url_list.append('')
+                else:
+                    title_list.append(df_ML_movies[df_ML_movies.MovieID.isin([id])].Title.to_numpy()[0])
+                    url_list.append(df_ML_movies[df_ML_movies.MovieID.isin([id])].PosterUrl.to_numpy()[0])
+            recommendation = list(zip(title_list, url_list, scores_list))
 
             return render_template('movie.html', recommendation=recommendation)
 
