@@ -25,3 +25,12 @@ def initial_data():
 
     return df,df_users,df_movies,df_ratings,df_posters
 
+# aaaa=100
+#
+# def aChange():
+#     global aaaa
+#     aaaa=aaaa+1
+#
+# print(aaaa)
+# aChange()
+# print(aaaa)
